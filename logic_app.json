@@ -1,0 +1,159 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "triggers": {
+            "When_a_new_message_is_added_to_a_chat_or_channel": {
+                "type": "ApiConnectionWebhook",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['teams']['connectionId']"
+                        }
+                    },
+                    "body": {
+                        "notificationUrl": "@listCallbackUrl()",
+                        "channels": [
+                            "19:@thread.tacv2"
+                        ],
+                        "groupId": "6fcc9f8e-d33a-4f17-bef2-"
+                    },
+                    "path": "/beta/subscriptions/newmessagetrigger/threadType/@{encodeURIComponent('channel')}"
+                }
+            }
+        },
+        "actions": {
+            "For_each": {
+                "foreach": "@triggerBody()?['value']",
+                "actions": {
+                    "Get_message_details": {
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['teams']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "body": {
+                                "recipient": {
+                                    "groupId": "6fcc9f8e-d33a-4f17-bef2-583ed46b6e4b",
+                                    "channelId": "19:@thread.tacv2"
+                                }
+                            },
+                            "path": "/beta/teams/messages/@{encodeURIComponent(items('For_each')?['messageId'])}/messageType/@{encodeURIComponent('channel')}"
+                        }
+                    },
+                    "Compose_Data_filter": {
+                        "runAfter": {
+                            "Get_message_details": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Compose",
+                        "inputs": "@body('Get_message_details')?['body']"
+                    },
+                    "HTTP_Data_format": {
+                        "runAfter": {
+                            "Compose_Data_filter": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Http",
+                        "inputs": {
+                            "uri": "https://dealwithchat-.canadacentral-01.azurewebsites.net/api/check_message,
+                            "method": "POST",
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": "@outputs('Compose_Data_filter')"
+                        },
+                        "runtimeConfiguration": {
+                            "contentTransfer": {
+                                "transferMode": "Chunked"
+                            }
+                        }
+                    },
+                    "Condition": {
+                        "actions": {
+                            "Send_an_email_(V2)": {
+                                "type": "ApiConnection",
+                                "inputs": {
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['office365']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "body": {
+                                        "To": "xxxx@algonquinlive.com",
+                                        "Subject": "CST8917 Lab 3 – Violence Category Detection Test",
+                                        "Body": "<p class=\"editor-paragraph\">@{body('HTTP_Data_format')}</p>",
+                                        "Importance": "Normal"
+                                    },
+                                    "path": "/v2/Mail"
+                                }
+                            }
+                        },
+                        "runAfter": {
+                            "HTTP_Data_format": [
+                                "Succeeded"
+                            ]
+                        },
+                        "else": {
+                            "actions": {
+                                "Compose": {
+                                    "type": "Compose",
+                                    "inputs": "@body('HTTP_Data_format')"
+                                }
+                            }
+                        },
+                        "expression": {
+                            "or": [
+                                {
+                                    "contains": [
+                                        "@body('HTTP_Data_format')",
+                                        "Hate"
+                                    ]
+                                },
+                                {
+                                    "equals": [
+                                        "",
+                                        ""
+                                    ]
+                                }
+                            ]
+                        },
+                        "type": "If"
+                    }
+                },
+                "runAfter": {},
+                "type": "Foreach"
+            }
+        },
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "type": "Object",
+            "value": {
+                "teams": {
+                    "id": "/subscriptions/cc6178d9-393a-40b4-8355-d26737d0be44/providers/Microsoft.Web/locations/canadacentral/managedApis/teams",
+                    "connectionId": "/subscriptions/cc6178d9-393a-40b4-8355-d26737d0be44/resourceGroups/cst8917lab3-rg/providers/Microsoft.Web/connections/teams",
+                    "connectionName": "teams"
+                },
+                "office365": {
+                    "id": "/subscriptions/cc6178d9-393a-40b4-8355-d26737d0be44/providers/Microsoft.Web/locations/canadacentral/managedApis/office365",
+                    "connectionId": "/subscriptions/cc6178d9-393a-40b4-8355-d26737d0be44/resourceGroups/cst8917lab3-rg/providers/Microsoft.Web/connections/office365",
+                    "connectionName": "office365"
+                }
+            }
+        }
+    }
+}

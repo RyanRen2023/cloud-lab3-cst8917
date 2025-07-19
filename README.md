@@ -1,95 +1,177 @@
-# CST8917 Lab 3: Implementing a Teams Chat Content Moderation Service
+# CST8917 Lab 3: Microsoft Teams Chat Content Moderation Service
 
-## Objective
 
-In this lab, you will develop an **Microsoft Teams chat content moderation service** using **Azure Logic Apps**. The service will monitor Teams chat messages for inappropriate content and automatically trigger **email notifications** when a policy violation is detected. Optionally, you can enhance the workflow using **Azure Functions** and **Azure Cognitive Services for Language**.
+## Project Overview
 
-By completing this lab, you will demonstrate your ability to orchestrate automated workflows using Azure services and apply content analysis to real-time communication data.
+This project implements a Microsoft Teams chat content moderation service based on Azure Logic Apps. The service can monitor Teams chat messages in real-time, detect inappropriate content, and automatically trigger email notifications when policy violations are detected.
 
----
+### Key Features
+- 🔍 **Real-time Monitoring**: Listen to Microsoft Teams chat messages
+- 🤖 **Intelligent Moderation**: Use AI technology to analyze message content
+- 📧 **Automatic Notifications**: Send email alerts when inappropriate content is detected
+- ⚡ **Real-time Response**: Millisecond-level response time
+- 🔧 **Scalable Architecture**: Support for Azure Functions and Cognitive Services integration
 
-## About the Technologies
+## Technical Architecture
 
-### Azure Logic Apps
+### Core Technology Stack
+- **Azure Logic Apps**: Workflow orchestration and automation
+- **Microsoft Teams**: Message source and trigger
+- **Azure Cognitive Services for Language**: AI content analysis (optional)
+- **Azure Functions**: Message preprocessing (optional)
 
-Azure Logic Apps is a cloud-based service that allows you to automate workflows and integrate services without writing much code. It is ideal for building real-time systems triggered by services like Microsoft Teams, email, or HTTP endpoints.
+### Azure Components Overview
+![Azure Components](./images/azure-compnents.png)
 
-### Azure Cognitive Services (Optional)
+### System Architecture Diagram
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Microsoft     │    │   Azure Logic   │    │   Email         │
+│   Teams         │───▶│   Apps          │───▶│   Notification  │
+│   (Trigger)     │    │   (Workflow)    │    │   (Action)      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                       ┌─────────────────┐
+                       │   Azure         │
+                       │   Functions     │
+                       │   (Optional)    │
+                       └─────────────────┘
+                              │
+                              ▼
+                       ┌─────────────────┐
+                       │   Azure         │
+                       │   Cognitive     │
+                       │   Services      │
+                       │   (Optional)    │
+                       └─────────────────┘
+```
 
-Azure Cognitive Services for Language can analyze chat messages and identify inappropriate content using AI-powered natural language processing.
+## Implementation Steps
 
-### Azure Functions (Optional)
+### 1. Design Moderation Workflow
+- [x] Create system flowchart
+- [x] Define message processing logic
+- [x] Design email notification template
 
-Azure Functions can be used to customize or preprocess messages before they are evaluated by other services.
+#### Workflow Design
+![Workflow](./images/workflow-design.png)
 
----
+### 2. Build Moderation Service
+- [x] Set up Azure Logic Apps
+- [x] Configure Microsoft Teams trigger
+- [x] Implement message processing logic
+- [x] Integrate optional services (Functions/Cognitive Services)
 
-## Tasks
+#### Azure Function Deployment
+![Azure Function Deployment](./images/azure-function-deployment.png)
 
-### 1. Design the Moderation Workflow
+### 3. Implement Email Notifications
+- [x] Configure email sending logic
+- [x] Design notification template
+- [x] Test email sending functionality
 
-- Create a **flowchart** that outlines how your moderation system works.
-- Include components like Microsoft Teams trigger, Logic App flow, optional Azure Functions, optional Cognitive Services, and email notifications.
+### 4. Testing and Validation
+- [x] Unit testing
+- [x] Integration testing
+- [x] End-to-end testing
 
-### 2. Build the Moderation Service
 
-- Use **Azure Logic Apps** to set up a trigger that listens for new chat messages from **Microsoft Teams**.
-- Optionally integrate:
-  - **Azure Functions** to process or filter messages.
-  - **Azure Cognitive Services** to analyze message content for violations.
-- Ensure that your service reacts in **real time**.
+## Features
 
-### 3. Implement the Email Notification Logic
+### Core Features
+- ✅ Real-time Teams message monitoring
+- ✅ Content violation detection
+- ✅ Automatic email notifications
+- ✅ Configurable moderation rules
 
-- Configure the Logic App to **send an email** to a specified administrator when inappropriate content is detected.
-- Follow the format provided in the official alert template (if available).
+### Optional Enhanced Features
+- Azure Functions integration
+- AI content analysis
+- Security authentication
 
-### 4. Test the Workflow
+## Technical Implementation
 
-- Simulate messages in Microsoft Teams and ensure:
-  - Violations are detected correctly.
-  - Email notifications are triggered.
-  - Optional services (Functions, Cognitive Services) are working correctly.
+### Logic Apps Workflow
 
-### 5. Document Your Project
+[Logic Application code](logic_app.json)
 
-Include the following in your documentation:
-- A screenshot or export of your workflow flowchart.
-- Description of your Logic App setup.
-- Optional: details about Azure Functions or Cognitive Services used.
-- Explanation of how you tested the workflow.
-- Challenges you encountered and how you resolved them.
-- Recommendations for future improvement.
+## Testing Strategy
 
-### 6. Record a Demo
+### Test Scenarios
+1. **Normal Message Testing**: Verify normal messages are not falsely flagged
+2. **Violation Content Testing**: Verify inappropriate content is correctly detected
 
-- Create a short video (3–5 minutes) demonstrating:
-  - Your Logic App in action.
-  - Explanation of your setup.
-  - Any lessons learned.
 
----
+## Deployment Guide
 
-## Deliverables
+### Prerequisites
+- Azure subscription
+- Microsoft Teams administrator permissions
+- Email service configuration
 
-- Your completed Logic App workflow.
-- A screenshot or exported image of your **moderation flowchart**.
-- Your written **report** (as a separate file or included in `README.md`).
-- A demo video uploaded to YouTube, linked in the `README.md`.
+### Deployment Steps
+1. Create Azure Logic Apps resource
+2. Configure Teams connector
+3. Set up email notifications
+4. Test workflow
+5. Monitor and optimize
 
----
 
-## Submission Instructions
+## Monitoring and Maintenance
 
-Submit the following via Brightspace:
+![Workflow](./images/workflow.png)
 
-- Link to your **public GitHub repository** containing:
-  - Logic App definitions
-  - Optional Function or Cognitive Service code
-  - `README.md` with documentation
-  - Your demo video link (if available)
-- Your GitHub repo must be **well-structured and publicly accessible**.
 
-**Deadline**: *Sunday, 20 July 2025*
+### Monitoring Metrics
+- Message processing volume
+- Response time
+- Error rate
+- Violation detection accuracy
 
+### Maintenance Tasks
+- Regularly update moderation rules
+- Monitor system performance
+- Backup configuration data
+- Update dependent services
+
+## Challenges and Solutions
+
+### Common Challenges
+1. **Real-time Requirements**: Use Azure Logic Apps real-time triggers
+2. **Accuracy Balance**: Combine rules and AI to improve detection accuracy
+3. **Scalability Considerations**: Adopt microservice architecture design
+4. **Security Assurance**: Implement appropriate access controls
+
+### Solutions
+- Use Azure Event Grid to improve real-time performance
+- Integrate multiple AI services to improve accuracy
+- Adopt containerized deployment to improve scalability
+- Implement Azure AD authentication for security
+
+## Future Improvements
+
+### Short-term Improvements
+- [ ] Add more moderation rules
+- [ ] Optimize AI model performance
+- [ ] Implement moderation history records
+
+### Long-term Planning
+- [ ] Support multi-language detection
+- [ ] Integrate more communication platforms
+- [ ] Implement machine learning model training
+- [ ] Add advanced analytics features
+
+## Demo Video
+
+📹 **Project Demo**: 
+
+
+[Demo video](https://youtu.be/iovNjpzth_4)
+
+Demo content includes:
+- Logic App workflow demonstration
+- Real-time message processing demo
+- Email notification feature showcase
+- System architecture explanation
 
